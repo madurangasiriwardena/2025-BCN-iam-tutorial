@@ -17,7 +17,6 @@
  */
 
 .addUserButton{
-    width: 25%;
     height: 50px;
     font-size: 18px;
     border-radius: 22px;
@@ -29,4 +28,9 @@
     color: #ffffff;
     border-color: #e2e2e2;
     border-width: 0;
+}
+
+.cancelButton {
+    height: 50px;
+    font-size: 1rem;
 }

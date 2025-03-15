@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Modal, Button, Loader, Message, useToaster } from "rsuite";
-import { Form } from "react-final-form";
+import { Modal, Loader, Message, useToaster } from "rsuite";
+import { Form, Field } from "react-final-form";
 import {
   FormButtonToolbar,
-  FormField
+  FormField,
 } from "@pet-management-webapp/shared/ui/ui-basic-components";
 import FormSuite from "rsuite/Form";
 import { getConfig } from "@pet-management-webapp/business-admin-app/util/util-application-config-util";
@@ -13,6 +13,59 @@ export const SignUp = ({ open, onClose }) => {
   const [error, setError] = useState(null);
 
   const toaster = useToaster();
+
+  // Password validation function
+  const validatePassword = (value) => {
+    if (!value) {
+      return "Password is required";
+    }
+
+    if (value.length < 8 || value.length > 30) {
+      return "Password must be between 8 and 30 characters";
+    }
+
+    if (!/[A-Z]/.test(value)) {
+      return "Password must contain at least one uppercase letter";
+    }
+
+    if (!/\d/.test(value)) {
+      return "Password must contain at least one digit";
+    }
+
+    return undefined; // Return undefined when validation passes
+  };
+
+  // Form validation function
+  const validate = (values) => {
+    const errors = {};
+
+    // Password validation
+    const passwordError = validatePassword(values.password);
+    if (passwordError) {
+      errors.password = passwordError;
+    }
+
+    // Add other field validations as needed
+    if (!values.email) {
+      errors.email = "Email is required";
+    }
+
+    if (!values.firstName) {
+      errors.firstName = "First name is required";
+    }
+
+    if (!values.lastName) {
+      errors.lastName = "Last name is required";
+    }
+
+    if (!values.organizationName) {
+      errors.organizationName = "Team name is required";
+    }
+
+    console.log(errors);
+
+    return errors;
+  };
 
   const handleSignUp = async (values) => {
     setLoading(true);
@@ -58,13 +111,14 @@ export const SignUp = ({ open, onClose }) => {
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={onClose} size="xs">
       <Modal.Header>
         <Modal.Title>Sign Up</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form
           onSubmit={handleSignUp}
+          validate={validate}
           render={({ handleSubmit }) => (
             <FormSuite
               layout="vertical"
@@ -77,9 +131,25 @@ export const SignUp = ({ open, onClose }) => {
                 <FormSuite.Control name="email" required />
               </FormField>
 
-              <FormField name="password" label="Password">
-                <FormSuite.Control name="password" type="password" required />
-              </FormField>
+              <Field name="password">
+                {({ input, meta }) => (
+                  <FormField name="password" label="Password">
+                    <>
+                      <FormSuite.Control
+                        {...input}
+                        type="password"
+                        error={meta.touched && meta.error}
+                        errorMessage={meta.touched && meta.error}
+                        required
+                      />
+                      <FormSuite.HelpText>
+                        Password must be 8-30 characters, at least one uppercase
+                        letter and at least 1 digit.
+                      </FormSuite.HelpText>
+                    </>
+                  </FormField>
+                )}
+              </Field>
 
               <FormField name="firstName" label="First Name">
                 <FormSuite.Control name="firstName" required />

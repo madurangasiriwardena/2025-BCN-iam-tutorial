@@ -47,7 +47,7 @@ export function FormButtonToolbar(props: FormButtonToolbarProps) {
                 {
                     needCancel
                         ? (<Button
-                            className={ styles["addUserButton"] }
+                            className={ styles["cancelButton"] }
                             size="lg"
                             appearance="ghost"
                             type="button"
